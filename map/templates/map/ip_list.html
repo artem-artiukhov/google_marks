@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coordinates</title>
+    <script type="text/javascript"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs6c5oPlKUPkW6eRdxkgHmyiHiBFVfPSw">
+    </script>
+    <script type="text/javascript">
+        var map;
+        var marker;
+        function initialize() {
+            var mapOptions = {
+                center: new google.maps.LatLng(50.5842535, 30.4245694),
+                zoom: 10
+            };
+            map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+            google.maps.event.addListener(map, 'click',
+                function (event) {
+                    placeMarker(event.latLng);
+                });
+            placeIPs();
+        }
+
+        function placeIPs() {
+            {% for ip in context %}
+                new google.maps.Marker({
+                    position: new google.maps.LatLng({{ ip.latitude }}, {{ ip.longitude }}),
+                    map: map,
+                    title: "{{ ip.ip }}\n{{ ip.time_logged }}"
+                });
+            {% endfor %}
+        }
+
+        function placeMarker(location) {
+            if (marker) {
+                marker.setPosition(location);
+            } else {
+                marker = new google.maps.Marker({
+                    position: location,
+                    map: map
+                });
+            }
+        }
+    </script>
+</head>
+<body onload="initialize()">
+    <h1>IP MAP</h1>
+    <p>A map of IP addresses logged in our server.</p>
+    <div id="map-canvas" style="width:80%; height:700px;"></div>
+{#    {% block content %}#}
+{#        <h2>IPs</h2>#}
+{#        <table>#}
+{#            <tbody>#}
+{#                <tr>#}
+{#                    <th>IP</th>#}
+{#                    <th>Date Logged</th>#}
+{#                    <th>Longitude</th>#}
+{#                    <th>Latitude</th>#}
+{#                </tr>#}
+{#                {% for ip in context %}#}
+{#                    <tr>#}
+{#                        <td>{{ ip.ip }}</td>#}
+{#                        <td>{{ ip.time_logged}}</td>#}
+{#                        <td>{{ ip.longitude }}#}
+{#                        <td>{{ ip.latitude }}</td>#}
+{#                    </tr>#}
+{#                {% endfor %}#}
+{#            </tbody>#}
+{#        </table>#}
+{#    {% endblock %}#}
+    <p>In order to upload more addresses, please use this <a href="{% url 'ip_form' %}">link</a>.</p>
+</body>
+</html>
