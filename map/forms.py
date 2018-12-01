@@ -1,5 +1,8 @@
 from django import forms
+from .models import FileModel
 
-class IPSendingForm(forms.Form):
+class IPSendingForm(forms.ModelForm):
     # ip = forms.GenericIPAddressField(required=False)
-    file_field = forms.FileField(required=True)
+    class Meta:
+        model = FileModel
+        fields = ['name','log_file']

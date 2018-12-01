@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Coordinates</title>
     <script type="text/javascript"
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs6c5oPlKUPkW6eRdxkgHmyiHiBFVfPSw">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs6c5oPlKUPkW6eRdxkgHmyiHiBFVfPSw&callback=initialize">
     </script>
     <script type="text/javascript">
         var map;
@@ -24,7 +24,7 @@
 
         function placeIPs() {
             {% for ip in context %}
-                new google.maps.Marker({
+                ip_s = new google.maps.Marker({
                     position: new google.maps.LatLng({{ ip.latitude }}, {{ ip.longitude }}),
                     map: map,
                     title: "{{ ip.ip }}\n{{ ip.time_logged }}"
