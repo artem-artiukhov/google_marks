@@ -14,6 +14,7 @@ from geolite2 import geolite2
 
 from map.models import Coordinates, FileModel
 from map.forms import IPSendingForm
+from .tasks import processing
 
 
 class CoordinateList(ListView):
@@ -40,6 +41,10 @@ class CoordinatesForm(FormView):
                 log_file=self.get_form_kwargs().get('files')['log_file']
             )
             log_file.save()
+            # launch asynchrornous task to process log file
+            print('we are here')
+            processing.delay(log_file.id)
+
             # reading single provided IP
             # ip = form.cleaned_data['ip']
             # if ip:
