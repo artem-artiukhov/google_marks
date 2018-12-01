@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Coordinates</title>
-    <script type="text/javascript"
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs6c5oPlKUPkW6eRdxkgHmyiHiBFVfPSw&callback=initialize">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs6c5oPlKUPkW6eRdxkgHmyiHiBFVfPSw&callback=initialize"
+            type="text/javascript">
     </script>
+
     <script type="text/javascript">
         var map;
         var marker;
+        var ip_s;
         function initialize() {
             var mapOptions = {
                 center: new google.maps.LatLng(50.5842535, 30.4245694),

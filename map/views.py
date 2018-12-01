@@ -12,7 +12,7 @@ from django.core import serializers
 
 from geolite2 import geolite2
 
-from map.models import Coordinates
+from map.models import Coordinates, FileModel
 from map.forms import IPSendingForm
 
 
@@ -28,43 +28,48 @@ class CoordinateList(ListView):
 class CoordinatesForm(FormView):
     form_class = IPSendingForm
     template_name = 'map/upload.html'
-    success_url = '/ips'
+    success_url = '/'
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        files = request.FILES['file_field']
+        # files = request.FILES['file_field']
         if form.is_valid():
+            log_file = FileModel(
+                name=self.get_form_kwargs().get('data')['name'],
+                log_file=self.get_form_kwargs().get('files')['log_file']
+            )
+            log_file.save()
             # reading single provided IP
-            ip = form.cleaned_data['ip']
-            if ip:
-                geo_reader = geolite2.reader()
-                ip_info = geo_reader.get(ip)
-                long = ip_info['location']['longitude']
-                lat = ip_info['location']['latitude']
-                # time_logged =
-                ip_save = Coordinates.objects.create(ip=ip, longitude=long,latitude=lat)
-                ip_save.save()
+            # ip = form.cleaned_data['ip']
+            # if ip:
+            #     geo_reader = geolite2.reader()
+            #     ip_info = geo_reader.get(ip)
+            #     long = ip_info['location']['longitude']
+            #     lat = ip_info['location']['latitude']
+            #     # time_logged =
+            #     ip_save = Coordinates.objects.create(ip=ip, longitude=long,latitude=lat)
+            #     ip_save.save()
 
             # working with uploaded file
-            for i, line in enumerate(files):
-                patt = re.compile('\[(.*)\]')
-                # for i, line in enumerate(f):
-                if i == 100:
-                    break
-                # print(i, line.decode('utf-8'))
-                time_logged = datetime.strptime(patt.search(line.decode('utf-8')).group(1), '%d/%b/%Y:%H:%M:%S %z')
-                geo_reader = geolite2.reader()
-                ip = line.split()[0].decode('utf-8')
-                ip_info = geo_reader.get(ip)
-                long = ip_info['location']['longitude']
-                lat = ip_info['location']['latitude']
-                # time_logged =
-                try:
-                    ip_save = Coordinates.objects.create(ip=ip, longitude=long,latitude=lat, time_logged=time_logged)
-                    ip_save.save()
-                except IntegrityError:
-                    continue
+            # for i, line in enumerate(files):
+            #     patt = re.compile('\[(.*)\]')
+            #     # for i, line in enumerate(f):
+            #     if i == 100:
+            #         break
+            #     # print(i, line.decode('utf-8'))
+            #     time_logged = datetime.strptime(patt.search(line.decode('utf-8')).group(1), '%d/%b/%Y:%H:%M:%S %z')
+            #     geo_reader = geolite2.reader()
+            #     ip = line.split()[0].decode('utf-8')
+            #     ip_info = geo_reader.get(ip)
+            #     long = ip_info['location']['longitude']
+            #     lat = ip_info['location']['latitude']
+            #     # time_logged =
+            #     try:
+            #         ip_save = Coordinates.objects.create(ip=ip, longitude=long,latitude=lat, time_logged=time_logged)
+            #         ip_save.save()
+            #     except IntegrityError:
+            #         continue
                 # print(line.split()[0].decode('utf-8'), type(time_logged))
             return self.form_valid(form)
         else:
